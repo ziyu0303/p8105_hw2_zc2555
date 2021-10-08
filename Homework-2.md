@@ -24,7 +24,9 @@ library(tidyverse)
 library(readxl)
 ```
 
-## Question 1, Mr.Trash Wheel Sheet clean up
+## Question 1
+
+*Mr.Trash Wheel Sheet clean up*
 
 ``` r
 trash_df=read_excel("./Trash_data.xlsx", 1) %>%
@@ -32,4 +34,12 @@ trash_df=read_excel("./Trash_data.xlsx", 1) %>%
    select(-c(x15, x16, x17)) %>%
    drop_na() 
 trash_df$sports_balls = round(trash_df$sports_balls)
+```
+
+*Precipitation 2019 data clean*
+
+``` r
+precipitation_df_2019 = read_excel("./Trash_data.xlsx", 4, skip = 1) %>%
+  drop_na()
+precipitation_df_2019$Year=2019
 ```
