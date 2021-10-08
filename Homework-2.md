@@ -36,7 +36,7 @@ trash_df=read_excel("./Trash_data.xlsx", 1) %>%
 trash_df$sports_balls = round(trash_df$sports_balls)
 ```
 
-*Precipitation 2019 data clean*
+*Precipitation 2019 data cleaning*
 
 ``` r
 precipitation_df_2019 = read_excel("./Trash_data.xlsx", 4, skip = 1) %>%
@@ -44,10 +44,17 @@ precipitation_df_2019 = read_excel("./Trash_data.xlsx", 4, skip = 1) %>%
 precipitation_df_2019$Year = 2019
 ```
 
-*Precipitation 2018 data clean*
+*Precipitation 2018 data cleaning*
 
 ``` r
 precipitation_df_2018 = read_excel("./Trash_data.xlsx", 5, skip = 1) %>%
   drop_na()
 precipitation_df_2018$Year = 2018
+```
+
+*merge 2019 and 2018 together*
+
+``` r
+precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
+precipitation_merge$Month = month.name[precipitation_merge$Month]
 ```
