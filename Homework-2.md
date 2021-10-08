@@ -41,5 +41,13 @@ trash_df$sports_balls = round(trash_df$sports_balls)
 ``` r
 precipitation_df_2019 = read_excel("./Trash_data.xlsx", 4, skip = 1) %>%
   drop_na()
-precipitation_df_2019$Year=2019
+precipitation_df_2019$Year = 2019
+```
+
+*Precipitation 2018 data clean*
+
+``` r
+precipitation_df_2018 = read_excel("./Trash_data.xlsx", 5, skip = 1) %>%
+  drop_na()
+precipitation_df_2018$Year = 2018
 ```
