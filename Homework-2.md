@@ -29,7 +29,7 @@ library(readxl)
 *Mr.Trash Wheel Sheet clean up*
 
 ``` r
-trash_df=read_excel("./Trash_data.xlsx", 1) %>%
+trash_df = read_excel("./Trash_data.xlsx", 1) %>%
    janitor::clean_names() %>%
    select(-c(x15, x16, x17)) %>%
    drop_na() 
@@ -57,4 +57,49 @@ precipitation_df_2018$Year = 2018
 ``` r
 precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
 precipitation_merge$Month = month.name[precipitation_merge$Month]
+```
+
+-   The trash\_df dataset contains 344 rows and 14 columns. The median
+    number of sports ball is 8
+
+\*The precipitation\_df\_2018 dataset contains 12 rows and 3. The total
+precipatation in 2018 is 70.33
+
+\*The precipitation\_df\_2019 dataset contains 6 rows and 3. Because it
+is missing a month 7 and after. Therefore, the recorded total
+precipatation in 2018 is only 16.67. But that is not an accurate number.
+
+## Question2
+
+*import cvs files*
+
+``` r
+pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
+```
+
+    ## Rows: 822 Columns: 9
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl  (8): prez_gop, gov_gop, sen_gop, rep_gop, prez_dem, gov_dem, sen_dem, r...
+    ## date (1): mon
+
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+pols_month_separated = separate(
+  pols_month,
+  mon,
+  c("Year", "Month", "Date" ))
+
+pols_month_separated$Month = month.name[as.integer(pols_month_separated$Month)]
+
+pols_month_separated = pols_month_separated %>%
+  mutate(president = case_when(
+    prez_dem == 1 ~ 'dem',
+    prez_dem == 0 ~ 'gop'
+  )) %>%
+  select(-c("prez_dem","prez_gop"))
 ```

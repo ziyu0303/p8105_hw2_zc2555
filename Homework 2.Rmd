@@ -4,3 +4,80 @@ author: "Ziyu Chen"
 date: "10/7/2021"
 output: github_document
 ---
+
+## R set up
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+## Question 1 
+_Mr.Trash Wheel Sheet clean up_
+
+```{r message=FALSE}
+trash_df = read_excel("./Trash_data.xlsx", 1) %>%
+   janitor::clean_names() %>%
+   select(-c(x15, x16, x17)) %>%
+   drop_na() 
+trash_df$sports_balls = round(trash_df$sports_balls)
+```
+
+
+_Precipitation 2019 data cleaning_
+
+```{r message=FALSE}
+precipitation_df_2019 = read_excel("./Trash_data.xlsx", 4, skip = 1) %>%
+  drop_na()
+precipitation_df_2019$Year = 2019
+```
+
+_Precipitation 2018 data cleaning_
+
+```{r message = FALSE}
+precipitation_df_2018 = read_excel("./Trash_data.xlsx", 5, skip = 1) %>%
+  drop_na()
+precipitation_df_2018$Year = 2018
+```
+
+_merge 2019 and 2018 together_
+```{r message = FALSE}
+precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
+precipitation_merge$Month = month.name[precipitation_merge$Month]
+```
+
+
+* 
+The trash_df dataset contains `r nrow(trash_df)` rows and `r ncol(trash_df)` columns.
+The median number of sports ball is `r median(pull(trash_df, sports_balls))`
+
+*The precipitation_df_2018 dataset contains `r nrow(precipitation_df_2018)` rows and `r ncol(precipitation_df_2018)`. The total precipatation in 2018 is `r sum(precipitation_df_2018$Total) `
+
+*The precipitation_df_2019 dataset contains `r nrow(precipitation_df_2019)` rows and `r ncol(precipitation_df_2019)`. Because it is missing a month 7 and after. Therefore, the recorded total precipatation in 2018 is only `r sum(precipitation_df_2019$Total) `. But that is not an accurate number. 
+
+## Question2
+
+_import cvs files_
+
+```{r}
+pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
+pols_month_separated = separate(
+  pols_month,
+  mon,
+  c("Year", "Month", "Date" ))
+
+pols_month_separated$Month = month.name[as.integer(pols_month_separated$Month)]
+
+pols_month_separated = pols_month_separated %>%
+  mutate(president = case_when(
+    prez_dem == 1 ~ 'dem',
+    prez_dem == 0 ~ 'gop'
+  )) %>%
+  select(-c("prez_dem","prez_gop"))
+
+
+```
+
+
+
+
+
