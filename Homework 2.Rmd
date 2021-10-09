@@ -9,6 +9,7 @@ output: github_document
 ```{r}
 library(tidyverse)
 library(readxl)
+library(dplyr)
 ```
 
 ## Question 1 
@@ -39,6 +40,7 @@ precipitation_df_2018 = read_excel("./Trash_data.xlsx", 7, skip = 1) %>%
   add_column(Year = 2018)
 ```
 
+
 _merge 2019 and 2018 together_
 ```{r message = FALSE}
 precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
@@ -51,14 +53,16 @@ The trash_df dataset contains `r nrow(trash_df)` rows and `r ncol(trash_df)` col
 The median number of sports ball is `r median(pull(trash_df, sports_balls))`
 
 *
-The precipitation_df_2018 dataset contains `r nrow(precipitation_df_2018)` rows and `r ncol(precipitation_df_2018)`. The total precipitation in 2018 is `r sum(pull(precipitation_df_2018,Total)) `
+The precipitation_df_2018 dataset contains `r nrow(precipitation_df_2018)` rows and `r ncol(precipitation_df_2018)` columns. The total precipitation in 2018 is `r sum(pull(precipitation_df_2018,Total)) `
 
 *
 The precipitation_df_2019 dataset contains `r nrow(precipitation_df_2019)` rows and `r ncol(precipitation_df_2019)` columns. The recorded total precipitation in 2018 is only `r sum(pull(precipitation_df_2019,Total)) `. 
 
+
 ## Question2
 
 _import cvs files_
+_clean pols_month.csv_
 
 ```{r}
 pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
@@ -67,8 +71,9 @@ pols_month_separated = separate(
   mon,
   c("Year", "Month", "Date" ))
 
-pols_month_separated$Month = month.name[as.integer(pols_month_separated$Month)]
-
+pols_month_separated =
+  pols_month_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  
 pols_month_separated = pols_month_separated %>%
   mutate(president = case_when(
     prez_dem == 1 ~ 'dem',
@@ -78,7 +83,45 @@ pols_month_separated = pols_month_separated %>%
 
 
 ```
+_clean snp.csv_
 
+```{r}
+snp_df = read_csv(file = "./fivethirtyeight_datasets/snp.csv")
+snp_df_separated = separate(
+  snp_df,
+  date,
+  c("Month", "Date", "Year"))
+snp_df_separated =
+  snp_df_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  
+snp_df_separated = snp_df_separated %>% select (Year, Month, Date, close)
+```
+
+_import unemployment.csv_
+
+
+```{r}
+unemployment_df = read_csv(file = "./fivethirtyeight_datasets/unemployment.csv")
+
+unemployment_tidy_df= 
+  pivot_longer(
+    unemployment_df,
+    Jan:Dec,
+    names_to = "Month",
+    values_to = "rate"
+  )
+```
+
+
+
+## Question 3
+
+*```{r}
+name_df= read_csv(file = "./Popular_Baby_Names.csv") %>%
+   janitor::clean_names
+
+
+```
 
 
 

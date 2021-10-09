@@ -22,6 +22,7 @@ library(tidyverse)
 
 ``` r
 library(readxl)
+library(dplyr)
 ```
 
 ## Question 1
@@ -63,15 +64,15 @@ precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
 -   The trash\_df dataset contains 453 rows and 14 columns. The median
     number of sports ball is 9
 
--   The precipitation\_df\_2018 dataset contains 12 rows and 3. The
-    total precipitation in 2018 is 70.33
+-   The precipitation\_df\_2018 dataset contains 12 rows and 3 columns.
+    The total precipitation in 2018 is 70.33
 
 -   The precipitation\_df\_2019 dataset contains 12 rows and 3 columns.
     The recorded total precipitation in 2018 is only 33.95.
 
 ## Question2
 
-*import cvs files*
+*import cvs files* *clean pols\_month.csv*
 
 ``` r
 pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
@@ -94,8 +95,9 @@ pols_month_separated = separate(
   mon,
   c("Year", "Month", "Date" ))
 
-pols_month_separated$Month = month.name[as.integer(pols_month_separated$Month)]
-
+pols_month_separated =
+  pols_month_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  
 pols_month_separated = pols_month_separated %>%
   mutate(president = case_when(
     prez_dem == 1 ~ 'dem',
@@ -103,3 +105,64 @@ pols_month_separated = pols_month_separated %>%
   )) %>%
   select(-c("prez_dem","prez_gop"))
 ```
+
+*clean snp.csv*
+
+``` r
+snp_df = read_csv(file = "./fivethirtyeight_datasets/snp.csv")
+```
+
+    ## Rows: 787 Columns: 2
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): date
+    ## dbl (1): close
+
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+snp_df_separated = separate(
+  snp_df,
+  date,
+  c("Month", "Date", "Year"))
+snp_df_separated =
+  snp_df_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  
+snp_df_separated = snp_df_separated %>% select (Year, Month, Date, close)
+```
+
+*import unemployment.csv*
+
+``` r
+unemployment_df = read_csv(file = "./fivethirtyeight_datasets/unemployment.csv")
+```
+
+    ## Rows: 68 Columns: 13
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl (13): Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+unemployment_tidy_df= 
+  pivot_longer(
+    unemployment_df,
+    Jan:Dec,
+    names_to = "Month",
+    values_to = "rate"
+  )
+```
+
+## Question 3
+
+\*\`\`\`{r} name\_df= read\_csv(file = “./Popular\_Baby\_Names.csv”)
+%&gt;% janitor::clean\_names
+
+\`\`\`
