@@ -69,10 +69,11 @@ pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
 pols_month_separated = separate(
   pols_month,
   mon,
-  c("Year", "Month", "Date" ))
-
+  c("Year", "Month", "Date" )) %>%
+  select(-"Date")
 pols_month_separated =
-  pols_month_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  pols_month_separated %>% mutate(Month = month.name[as.integer(Month)],
+                                  Year = as.integer(Year)) 
   
 pols_month_separated = pols_month_separated %>%
   mutate(president = case_when(
@@ -90,11 +91,15 @@ snp_df = read_csv(file = "./fivethirtyeight_datasets/snp.csv")
 snp_df_separated = separate(
   snp_df,
   date,
-  c("Month", "Date", "Year"))
+  c("Month", "Date", "Year")) %>%
+  select(-"Date")
 snp_df_separated =
-  snp_df_separated %>% mutate(Month = month.name[as.integer(Month)]) 
+  snp_df_separated %>% mutate(Month = month.name[as.integer(Month)],
+                              Year = as.integer(Year),
+                              Year = ifelse(Year<=21, Year+2000, Year+1900)
+                              )
   
-snp_df_separated = snp_df_separated %>% select (Year, Month, Date, close)
+snp_df_separated = snp_df_separated %>% select (Year, Month, close)
 ```
 
 _import unemployment.csv_
@@ -109,9 +114,17 @@ unemployment_tidy_df=
     Jan:Dec,
     names_to = "Month",
     values_to = "rate"
-  )
+  ) %>% mutate(Year = as.integer(Year))
 ```
 
+
+_merging 3 datasets into one_
+
+```{r}
+merged_df=left_join(pols_month_separated, snp_df_separated, by=c("Year", "Month"))
+
+merged_all=left_join(merged_df, unemployment_tidy_df,by=c("Year", "Month"))
+```
 
 
 ## Question 3
