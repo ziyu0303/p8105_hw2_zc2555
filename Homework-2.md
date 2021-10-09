@@ -203,25 +203,57 @@ name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
+*table 1, the name of olivia*
+
 ``` r
-subset(name_df, childs_first_name == 'Olivia')%>%pivot_wider(
-            names_from = 'ethnicity',
-            values_from = 'rank'
-)
+table_olivia = name_df %>% 
+  filter(childs_first_name=='Olivia') %>%
+  select(c(year_of_birth,rank,ethnicity)) %>%
+  pivot_wider(
+    names_from = year_of_birth,
+    values_from = rank
+  )
+
+table_olivia = table_olivia[,c('ethnicity', '2011', '2012', '2013', '2014', '2015', '2016')]
+
+table_olivia
 ```
 
-    ## # A tibble: 24 × 8
-    ##    year_of_birth gender childs_first_name count `Asian and paci… `Black non hisp…
-    ##            <dbl> <chr>  <chr>             <dbl>            <dbl>            <dbl>
-    ##  1          2016 FEMALE Olivia              172                1               NA
-    ##  2          2016 FEMALE Olivia               49               NA                8
-    ##  3          2016 FEMALE Olivia              108               NA               NA
-    ##  4          2016 FEMALE Olivia              230               NA               NA
-    ##  5          2015 FEMALE Olivia              188                1               NA
-    ##  6          2015 FEMALE Olivia               82               NA                4
-    ##  7          2015 FEMALE Olivia               94               NA               NA
-    ##  8          2015 FEMALE Olivia              225               NA               NA
-    ##  9          2014 FEMALE Olivia              141                1               NA
-    ## 10          2014 FEMALE Olivia               52               NA                8
-    ## # … with 14 more rows, and 2 more variables: Hispanic <dbl>,
-    ## #   White non hispanic <dbl>
+    ## # A tibble: 4 × 7
+    ##   ethnicity                  `2011` `2012` `2013` `2014` `2015` `2016`
+    ##   <chr>                       <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1 Asian and pacific islander      4      3      3      1      1      1
+    ## 2 Black non hispanic             10      8      6      8      4      8
+    ## 3 Hispanic                       18     22     22     16     16     13
+    ## 4 White non hispanic              2      4      1      1      1      1
+
+``` r
+table_male = name_df %>% 
+  filter(gender=='MALE' & rank == '1') %>%
+  select(c(year_of_birth,childs_first_name,ethnicity)) %>%
+  pivot_wider(
+    names_from = year_of_birth,
+    values_from = childs_first_name
+  )
+
+table_male = table_male[,c('ethnicity', '2011', '2012', '2013', '2014', '2015', '2016')]
+
+table_male
+```
+
+    ## # A tibble: 4 × 7
+    ##   ethnicity                  `2011`  `2012` `2013` `2014` `2015` `2016`
+    ##   <chr>                      <chr>   <chr>  <chr>  <chr>  <chr>  <chr> 
+    ## 1 Asian and pacific islander Ethan   Ryan   Jayden Jayden Jayden Ethan 
+    ## 2 Black non hispanic         Jayden  Jayden Ethan  Ethan  Noah   Noah  
+    ## 3 Hispanic                   Jayden  Jayden Jayden Liam   Liam   Liam  
+    ## 4 White non hispanic         Michael Joseph David  Joseph David  Joseph
+
+``` r
+df_plot = name_df %>%
+  filter(gender=='MALE'&ethnicity=='White non hispanic'&year_of_birth=='2016')
+
+ggplot(df_plot, aes(x=rank, y=count))+geom_point()
+```
+
+![](Homework-2_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
