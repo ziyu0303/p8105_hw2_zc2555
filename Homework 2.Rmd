@@ -96,7 +96,7 @@ snp_df_separated = separate(
 snp_df_separated =
   snp_df_separated %>% mutate(Month = month.name[as.integer(Month)],
                               Year = as.integer(Year),
-                              Year = ifelse(Year<=21, Year+2000, Year+1900)
+                              Year = ifelse(Year<= 21, Year+2000, Year+1900)
                               )
   
 snp_df_separated = snp_df_separated %>% select (Year, Month, close)
@@ -126,16 +126,34 @@ merged_df=left_join(pols_month_separated, snp_df_separated, by=c("Year", "Month"
 merged_all=left_join(merged_df, unemployment_tidy_df,by=c("Year", "Month"))
 ```
 
+*Paragraph about three datasets
 
 ## Question 3
+_cleaning up the data_
 
-*```{r}
-name_df= read_csv(file = "./Popular_Baby_Names.csv") %>%
-   janitor::clean_names
+```{r}
+name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
+  janitor::clean_names() %>%
+  mutate(
+  childs_first_name = str_to_sentence(childs_first_name),
+  ethnicity = str_to_sentence(ethnicity),
+  ethnicity = recode ( ethnicity,
+                       'Asian and paci' = "Asian and pacific islander",
+                       'Black non hisp' = "Black non hispanic",
+                       'White non hisp' = "White non hispanic") )%>%
+  distinct()
+  
+
 
 
 ```
 
+```{r}
+subset(name_df, childs_first_name == 'Olivia')%>%pivot_wider(
+            names_from = 'ethnicity',
+            values_from = 'rank'
+)
+```
 
 
 

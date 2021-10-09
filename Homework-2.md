@@ -133,7 +133,7 @@ snp_df_separated = separate(
 snp_df_separated =
   snp_df_separated %>% mutate(Month = month.name[as.integer(Month)],
                               Year = as.integer(Year),
-                              Year = ifelse(Year<=21, Year+2000, Year+1900)
+                              Year = ifelse(Year<= 21, Year+2000, Year+1900)
                               )
   
 snp_df_separated = snp_df_separated %>% select (Year, Month, close)
@@ -173,9 +173,55 @@ merged_df=left_join(pols_month_separated, snp_df_separated, by=c("Year", "Month"
 merged_all=left_join(merged_df, unemployment_tidy_df,by=c("Year", "Month"))
 ```
 
+\*Paragraph about three datasets
+
 ## Question 3
 
-\*\`\`\`{r} name\_df= read\_csv(file = “./Popular\_Baby\_Names.csv”)
-%&gt;% janitor::clean\_names
+*cleaning up the data*
 
-\`\`\`
+``` r
+name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
+  janitor::clean_names() %>%
+  mutate(
+  childs_first_name = str_to_sentence(childs_first_name),
+  ethnicity = str_to_sentence(ethnicity),
+  ethnicity = recode ( ethnicity,
+                       'Asian and paci' = "Asian and pacific islander",
+                       'Black non hisp' = "Black non hispanic",
+                       'White non hisp' = "White non hispanic") )%>%
+  distinct()
+```
+
+    ## Rows: 19418 Columns: 6
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (3): Gender, Ethnicity, Child's First Name
+    ## dbl (3): Year of Birth, Count, Rank
+
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+subset(name_df, childs_first_name == 'Olivia')%>%pivot_wider(
+            names_from = 'ethnicity',
+            values_from = 'rank'
+)
+```
+
+    ## # A tibble: 24 × 8
+    ##    year_of_birth gender childs_first_name count `Asian and paci… `Black non hisp…
+    ##            <dbl> <chr>  <chr>             <dbl>            <dbl>            <dbl>
+    ##  1          2016 FEMALE Olivia              172                1               NA
+    ##  2          2016 FEMALE Olivia               49               NA                8
+    ##  3          2016 FEMALE Olivia              108               NA               NA
+    ##  4          2016 FEMALE Olivia              230               NA               NA
+    ##  5          2015 FEMALE Olivia              188                1               NA
+    ##  6          2015 FEMALE Olivia               82               NA                4
+    ##  7          2015 FEMALE Olivia               94               NA               NA
+    ##  8          2015 FEMALE Olivia              225               NA               NA
+    ##  9          2014 FEMALE Olivia              141                1               NA
+    ## 10          2014 FEMALE Olivia               52               NA                8
+    ## # … with 14 more rows, and 2 more variables: Hispanic <dbl>,
+    ## #   White non hispanic <dbl>
