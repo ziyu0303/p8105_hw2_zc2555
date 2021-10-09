@@ -76,20 +76,6 @@ precipitation_merge = rbind(precipitation_df_2018, precipitation_df_2019)
 
 ``` r
 pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
-```
-
-    ## Rows: 822 Columns: 9
-
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## dbl  (8): prez_gop, gov_gop, sen_gop, rep_gop, prez_dem, gov_dem, sen_dem, r...
-    ## date (1): mon
-
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 pols_month_separated = separate(
   pols_month,
   mon,
@@ -111,20 +97,6 @@ pols_month_separated = pols_month_separated %>%
 
 ``` r
 snp_df = read_csv(file = "./fivethirtyeight_datasets/snp.csv")
-```
-
-    ## Rows: 787 Columns: 2
-
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## chr (1): date
-    ## dbl (1): close
-
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 snp_df_separated = separate(
   snp_df,
   date,
@@ -139,23 +111,11 @@ snp_df_separated =
 snp_df_separated = snp_df_separated %>% select (Year, Month, close)
 ```
 
-*import unemployment.csv*
+*import and clean unemployment.csv*
 
 ``` r
 unemployment_df = read_csv(file = "./fivethirtyeight_datasets/unemployment.csv")
-```
 
-    ## Rows: 68 Columns: 13
-
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## dbl (13): Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
-
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 unemployment_tidy_df= 
   pivot_longer(
     unemployment_df,
@@ -173,7 +133,22 @@ merged_df=left_join(pols_month_separated, snp_df_separated, by=c("Year", "Month"
 merged_all=left_join(merged_df, unemployment_tidy_df,by=c("Year", "Month"))
 ```
 
-\*Paragraph about three datasets
+*The following paragraph describe the details about 3 datasets*
+
+-   After cleaning an tidying the dataset, it contains 787 obs and 3
+    variables. Year month and close, Close will tell closing values of
+    the S&P stock index on the associated date.The year range from
+    1950-2015.
+
+-   The cleaned version of unemployment data has 816 obs and 3
+    variables. The varible rate will be the rate of umemployment in that
+    month of the year.
+
+-   After cleaning the pols\_month datadet, the pols\_month\_separated
+    dataset contains 822 obs and 9 variables. The president variable is
+    created based on Prez\_Dem and Prez\_gop, it can tell people which
+    the gov is democrative or republican at anytime. The range of year
+    is 1947 to 2015.
 
 ## Question 3
 
@@ -191,17 +166,6 @@ name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
                        'White non hisp' = "White non hispanic") )%>%
   distinct()
 ```
-
-    ## Rows: 19418 Columns: 6
-
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## chr (3): Gender, Ethnicity, Child's First Name
-    ## dbl (3): Year of Birth, Count, Rank
-
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 *table 1, the name of olivia*
 

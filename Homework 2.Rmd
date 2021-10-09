@@ -64,7 +64,7 @@ The precipitation_df_2019 dataset contains `r nrow(precipitation_df_2019)` rows 
 _import cvs files_
 _clean pols_month.csv_
 
-```{r}
+```{r message=FALSE}
 pols_month = read_csv(file = "./fivethirtyeight_datasets/pols-month.csv")
 pols_month_separated = separate(
   pols_month,
@@ -84,9 +84,11 @@ pols_month_separated = pols_month_separated %>%
 
 
 ```
+
+
 _clean snp.csv_
 
-```{r}
+```{r message=FALSE}
 snp_df = read_csv(file = "./fivethirtyeight_datasets/snp.csv")
 snp_df_separated = separate(
   snp_df,
@@ -102,10 +104,11 @@ snp_df_separated =
 snp_df_separated = snp_df_separated %>% select (Year, Month, close)
 ```
 
-_import unemployment.csv_
+
+_import and clean unemployment.csv_
 
 
-```{r}
+```{r message=FALSE}
 unemployment_df = read_csv(file = "./fivethirtyeight_datasets/unemployment.csv")
 
 unemployment_tidy_df= 
@@ -120,18 +123,26 @@ unemployment_tidy_df=
 
 _merging 3 datasets into one_
 
-```{r}
+```{r message=FALSE}
 merged_df=left_join(pols_month_separated, snp_df_separated, by=c("Year", "Month"))
 
 merged_all=left_join(merged_df, unemployment_tidy_df,by=c("Year", "Month"))
 ```
 
-*Paragraph about three datasets
+_The following paragraph describe the details about 3 datasets_
+
+* After cleaning an tidying the dataset, it contains 787 obs and 3 variables. Year month and close, Close will tell closing values of the S&P stock index on the associated date.The year range from 1950-2015.
+
+* The cleaned version of unemployment data has 816 obs and 3 variables. The varible rate will be the rate of umemployment in that month of the year. 
+
+* After cleaning the pols_month datadet, the pols_month_separated dataset contains 822 obs and 9 variables. The president variable is created based on Prez_Dem and Prez_gop, it can tell people which the gov is democrative or republican at anytime. The range of year is 1947 to 2015. 
+
+
 
 ## Question 3
 _cleaning up the data_
 
-```{r}
+```{r message=FALSE}
 name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
   janitor::clean_names() %>%
   mutate(
@@ -150,7 +161,7 @@ name_df = read_csv(file = "./Popular_Baby_Names.csv") %>%
 
 _table 1, the name of olivia_
 
-```{r}
+```{r message=FALSE}
 table_olivia = name_df %>% 
   filter(childs_first_name=='Olivia') %>%
   select(c(year_of_birth,rank,ethnicity)) %>%
@@ -164,7 +175,7 @@ table_olivia = table_olivia[,c('ethnicity', '2011', '2012', '2013', '2014', '201
 table_olivia
 ```
 
-```{r}
+```{r message=FALSE}
 table_male = name_df %>% 
   filter(gender=='MALE' & rank == '1') %>%
   select(c(year_of_birth,childs_first_name,ethnicity)) %>%
@@ -179,7 +190,7 @@ table_male
 ```
 
 
-```{r}
+```{r message=FALSE}
 df_plot = name_df %>%
   filter(gender=='MALE'&ethnicity=='White non hispanic'&year_of_birth=='2016')
 
